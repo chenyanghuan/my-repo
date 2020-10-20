@@ -1,0 +1,472 @@
+---
+title: "Life Satisfacation Analysis using linear regression model"
+author: "Mengying Li, Jiaxin Zhang, Chenyang Huan"
+date: "Oct 19, 2020"
+output: bookdown::pdf_document2
+bibliography: references.bib
+nocite: '@*'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(knitr)
+```
+
+## Life Satisfacation Analysis using linear regression model.
+
+# Mengying Li, Jiaxin Zhang, Chenyang Huan 
+# Oct 19, 2020
+
+## Abstract
+
+ With the increasing improvement of national living standard and quality, life 
+ satisfaction has gradually become the focus of attention in countries, and also
+ a topic of interest to our study. In this report, we mainly focus on five 
+ demographic factors which are age, gender, marital status, education level and
+ income levels, conduct cautious research to find out how different groups of 
+ individuals in Canada have a difference in their life satisfaction. The result
+ of our study found, among all the factors, marital status has the most
+ significant impact on life satisfaction, and income level has the second most 
+ significant impact on life satisfaction, while age, gender, and education level
+ has a relatively weak impact on life satisfaction compared to other factors.
+
+## Introduction
+
+  In this report, our goal is to find out the factors which will affect life 
+satisfaction and to what extent. In recent years, national life satisfaction 
+has been a hot topic in the country. Since life satisfaction is a comprehensive
+index to measure the quality of life of citizens in a country and it could also 
+indirectly reflect the comprehensive level of the country, thus its research is 
+of great significance to the improvement of people's quality of life. 
+Our research data is from GSS, an official and authoritative database. We select 
+the data of "feeling_life" from the GSS database as the research object, and 
+other variables to investigate this topic together. 
+With statistical knowledge to conduct a cautious research survey, we aim to 
+investigate which factor of these five factors will have a greater or lesser 
+impact on people's life satisfaction. We build a linear regression model with 
+the sorted data. There are five independent variables, namely age, gender, 
+marital status, income level and education level. The dependent variable is life 
+satisfaction, which is the topic we want to investigate. The conclusion of this 
+report is marital status is the most significant factor affecting life 
+satisfaction. Age and gender have an approximately statistically significant 
+but smaller effect on life satisfaction to the extent. Compared with the first 
+three factors, income level has a less statistically significant but relatively 
+large impact on life satisfaction. Education level on life satisfaction has the 
+weakest effect among five variables, most categories in education have an 
+insignificant impact on life satisfaction except for the category less than high
+school. 
+This model can help us to analyze the relationship between life satisfaction and 
+these factors and predict the level of life satisfaction under given conditions. 
+Moreover, through the linear regression model, we can also make specific 
+solutions to the improvement of life satisfaction under different conditions.
+
+
+
+## Data
+
+The 2017 General Social Survey which is available on chass in utoronto library
+  was conducted from February 2$^{nd}$ to 
+  November 30$^h$. The objectives are collecting social trends data to track 
+  changes in both living conditions and well-being of Canadians. In addition, 
+providing information on current or with emerging interest policies. As this 
+dataset is the latest version available, it would be appropirate to make 
+analysis.The focus 
+of this report is what factors would affect Canadians' life satisfaction, so 
+feelings_life
+is the response variable while age, gender, region, province, income_respondent, 
+education, marital_status, children_in_household, owe_rent will be investigated
+to find the relationship between the response variable and them. 
+  Core content and classification variables were included in order to achieve 
+  the objectives. The core content was created to measure social changes related
+  to life and provide information to report on welfare and other specific 
+  policies. 
+  The survey was distributed through out phone calls. The target population is 
+  people live in Canada who aged 15 and above while residents in Yukon Northwest
+  Territories, Nunavut and full-time residents of institutions were excluded.
+  The frame was made up of the list of telephone numbers in use that were 
+  available on Statistics Canada and the list of all dwellings on Address 
+  Register. The General Social Survey used stratified sampling, every record 
+in the frame was allocated to a stratum within its province, then a simple 
+random sampling without replacement was performed within those stratum. 
+Trade-offs might be some areas were over-represented while others were 
+under-represented and some provinces were excluded. 
+Among the phone number list, 91.8% of them reaches eligible households that 
+have at least one person who was aged 15 and above. The sample population was 
+20,602. 52.4% of the phone call survey was responded, since "cell phone only" 
+households were added to the frame and these population was harder to reach.  
+There were three stages of adjustments for non-responses based on amount of 
+auxiliary information of the phone number available in Statistics Canada and 
+weight for responding telephone numbers would be adjusted accordingly.
+  The questionnaire was quite comprehensive and questions were all related to 
+  target population's well-being so that appropriate adjustment of social 
+  policies could be made based on the data collected. Some questions and options
+  in the questionnaire might be misleading and caused some non-response. For 
+  instance, the question asked for respondent's macro-region's place of birth 
+  has lots of NAs for those who were born in Canada. The answer categories 
+  includes "Americas",""Europe" and other continents, people might consider 
+  "Americas" as the United States.
+
+
+
+## Model
+This report is interested in one topic, namely: the satisfaction with the life 
+of people of different ages, genders, regions, income levels, and family status. 
+To study this topic, we selected the following variables from the data set: 
+feelings_life, age, gender, region, province, income_respondent, education, 
+marital_status, children_in_household, owe_rent. We write code in 
+Rstudio which is statistical software that able to build and summarize models. 
+To investigate life satisfaction, we choose the variable feelings_life as the 
+response variable (Y) of our model, which is a quantitative variable from 0 to 
+10 
+(from "very dissatisfied" to "very satisfied" respectively). This variable can 
+be treated as an 11-category variable. However, since we use this variable as a 
+response variable, if we treated it as a category variable, we should use a 
+logical regression model which is a statistical method that enables us to 
+summarize and study relationships between the category response variable and 
+multiple predictor variables. Logistical regression only accepts the response 
+variable with binary category while we aim for a specific numeric result on our 
+model other than binary categories such as satisfied and dissatisfied. 
+Considering that binary life satisfaction cannot provide a more detailed result, 
+we choose to treat life satisfaction as a quantitative variable. Therefore, we 
+use the multivariable linear regression in building the model, which allows us 
+to summarize and study relationships between the quantitative response variable 
+and multiple predictor variables. 
+The first predictor is the age which is a numeric variable. Choosing numeric 
+ages 
+instead of age-groups is because numeric variable is more specific. Moreover, 
+one-parameter rather than several parameters (for different categories) can save 
+unnecessary complexity (using age-groups requires us to divide the age into many 
+groups which result in many more parameters in our model, thus may lead to 
+overfitting, which means that the model is too complex and difficult to 
+interpret and understand). 
+The remaining eight variables are all categorical because these variables are 
+variables composed of different category groups that enable us to investigate 
+the different relationships with our response variable feelings_life. For 
+example, 
+sex is in two categories: male and female. We want to see whether these 
+different 
+types of sex have different relationships with life satisfaction. On the other 
+hand, personal income and the number of children in a household can be treated 
+as numeric variables, but we collect the data in categorical groups. Personal 
+income is categorical instead of numeric because we want to investigate the 
+difference in life satisfaction among people of different income levels other 
+than a specific number. The number of children in a household only range 
+from 0 to 2, and the majority is zero, so we keep this variable categorical
+in the hope of higher clarity. Since provinces and regions are remarkably 
+similar variables, we chose to use the region variable to avoid overfitting.
+While other variables are self-explanatory, the own_rent represents the status
+of whether the respondent is living in an owning or renting property.
+The dataset used stratified sampling in different provinces in Canada, which 
+requires the population size of each province in model building. According to 
+Statistics Canada, the population size by 2017 season 4 for each province is 
+as following: Quebec: 8336460; Manitoba: 1340565; Ontario: 14150783; 
+Alberta: 4258195; Nova Scotia: 953683; British Columbia: 4956550; 
+Saskatchewan: 1154755; Prince Edward Island: 151376; New Brunswick: 767935; 
+Newfoundland and Labrador: 528288. 
+
+We continue our analysis by building a linear regression model to predict the 
+variable feelings_life using the above-mentioned predictor variables 
+(except for province). Table 1 in the result section shows the summary of this 
+model. P-values for the variable region, own_rent, chiledren_in_household are 
+insignificant (large value), which indicates a large possibility of validation 
+of our null hypothesis (no difference in the response variable). Hence, we 
+decide 
+to drop these three variables out of our model. By using age, sex, marital 
+status, 
+education, and income variables, we build a linear regression with better 
+performance than the previous alternate model. 
+The formula of this model is as follow:
+
+$$
+Feelingslife = \beta_0 + \beta_1 x_{age} + \beta2x_{sex,Male} + \beta3x_{maritalstatus,ComLaw} + \beta4x_{maritalstatus,Married} +\\beta5x_{maritalstatus,Separated} +\beta6x_{maritalstatus,Single} +\beta7x_{maritalstatus,Widowed} +\\beta8x_{education,College} +\beta9x_{education,Highschool} +\beta10x_{education,LessHign} +\\beta11x_{education,Trade} +\beta12x_{education,UnivbelowBach} +\ \beta13x_{education,UnivaboveBach} + \\beta14x_{income,A} +\beta15x_{income,B} + \beta16x_{income,C} + \beta17x_{income,D} + \beta18x_{income,E} + \epsilon_i
+$$
+when income is A refers to the income level of higher than $12500, income B 
+refers to the income level of $25000-$49999, income C refers to the income level 
+of $50000-$74999, income D refers to $75000-$99999 and income E refers to income 
+level of less than $25000 (when income level is $10000-12499, it has no effect 
+on our response variable, this applies to all the category not showing in the 
+the formula for all categorical variables such as female). Other variables are 
+self-explanatory. The beta0 is the intercept value. It means the value of 
+feeings_life when all other variable equals to zero, which does not apply in 
+our model.
+
+The formula tells us, the value of feelings_life (life satisfaction) equals to 
+the sum of the parameters of variables with the respective category. For 
+example, for a single female with an age of 30, education level of college and 
+income level of$50000 per year, we expect that her value of feelings_life equals
+to the intercept(beta0), plus parameter beta1 times 30(her age), plus parameter 
+beta6, plus parameter beta8, plus parameter beta16 (with small errors). 
+
+
+
+Table 2 in the result section shows the summary of our model. The P values are 
+significant (extremely small) for every predictor variable (some category of the 
+variable has insignificant P-value), which indicates a large possibility of 
+validation of our alternate hypothesis (statistical difference in the response 
+variable). That is, variables in the model are statistically significant to 
+predict the value of our response variable, feelings of life. 
+However, the low R-squared value shows that only a small portion of data is 
+explained by our estimates. Another caveat is that not all of the model 
+assumption is satisfied such as Linearity of this model are not well satisfied. 
+Besides, this model only applies to Canadians given our dataset. 
+
+## Results
+
+```{r load data, include=FALSE}
+library(survey)
+
+# load the 2017 gss dataset
+setwd('/Users/chenyanghuan/Desktop')
+DATA <- read.csv("gss.csv")
+
+#If any categorical data are not factor type, convert it to factor 
+DATA$sex<-as.factor(DATA$sex)
+DATA$region<-as.factor(DATA$region)
+DATA$marital_status<-as.factor(DATA$marital_status)
+DATA$education<-as.factor(DATA$education)
+DATA$own_rent<-as.factor(DATA$own_rent)
+DATA$self_rated_health<-as.factor(DATA$self_rated_health)
+DATA$self_rated_mental_health<-as.factor(DATA$self_rated_mental_health)
+DATA$income_respondent<-as.factor(DATA$income_respondent)
+DATA$children_in_household<-as.factor(DATA$children_in_household)
+DATA$province<-as.factor(DATA$province)
+
+
+```
+
+```{r selected interested varoables, include=FALSE}
+
+y <- DATA %>%
+  select(feelings_life)
+
+x1 <- DATA %>% select(age)
+x2 <- DATA %>% select(sex)
+x3 <- DATA %>% select(region)
+x4 <- DATA %>% select(marital_status)
+x5 <- DATA %>% select(education)
+x6 <- DATA %>% select(own_rent)
+x7 <- DATA %>% select(income_respondent)
+x8 <- DATA %>% select(children_in_household)
+x9 <- DATA %>% select(province)
+
+indata <- data.frame(c(y,x1,x2,x3,x4,x5,x6,x7,x8,x9))
+```
+
+```{r drop NA, include=FALSE}
+#If there are any NAs, drop it.
+
+indata<-na.omit(indata)
+```
+
+Figure \@ref(fig:fig1) shows that most of the observations having a value of 
+greater than 7 on feeling_life. Plus, the median is 8 while the mean is 8.094. 
+This suggests a high level of life satisfaction in our dataset. Figure 1 shows 
+11 categories as we mentioned in the model section. However, simply dividing the 
+variable into a binary category would be less interpretable. If we simply use 
+the median value as the dividing line, then values below 8 will be attributed to
+dissatisfaction, which will make our results inconsistent with common sense. 
+If we adopt a reasonable value such as 6 as the dividing line, then the number 
+of people in the group below 6 will be too small to affect the accuracy of our 
+results. Hence, again, we choose the linear regression to build models.
+
+```{r fig1, fig.cap="feelings of life"}
+indata %>% ggplot(aes(feelings_life)) + geom_histogram()
+indata %>% summarise(AVG = mean(feelings_life, na.rm=T),
+                                                Med = median(feelings_life, na.rm = T))
+```
+
+Figure \@ref(fig:fig2) shows the relationship between feelings_life and each 
+predictor. The plots show that there are observable differences in the value of 
+feelings_life between the different categories in variables: marital_status, 
+income_respondent, own_rent. While other variables do not show differences, 
+we still need to see our model result to make an interpretation.
+
+```{r fig2, fig.cap="Plots of relationship between response variable and each predictor "}
+a <- indata %>% ggplot(aes(y=feelings_life, x=province)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+b <- indata %>% ggplot(aes(y=feelings_life , x= region)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+c <- indata %>% ggplot(aes(y=feelings_life , x= age)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+d <- indata %>% ggplot(aes(y=feelings_life, x=sex)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+e <- indata %>% ggplot(aes(y=feelings_life , x=income_respondent)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+f <- indata %>% ggplot(aes(y=feelings_life, x= marital_status)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+g <- indata %>% ggplot(aes(y=feelings_life , x= education)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+h <- indata %>% ggplot(aes(y=feelings_life , x= own_rent)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+i <- indata %>% ggplot(aes(y=feelings_life , x= children_in_household)) + geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+library(gridExtra)
+grid.arrange(a,b,c,d)
+grid.arrange(e,f)
+grid.arrange(h,i)
+h
+g
+```
+
+Table \@ref(tab:table1) has the results of the alternate linear regression 
+model. we can see that all of the P-value for categories in the 
+children_in_household
+variable is larger than 0.05 which indicates they are statistically 
+insignificant 
+for predicting our response variable. Also, most P-values for categories in the 
+region and own_rent variables are insignificant either.Moreover, as previously
+seen in figure 2, different categories in these 3 variables have minimal
+differences in the mean of our response variable. Hence, it is reasonable to 
+drop these 3 variables in our final model. 
+
+```{r table1}
+indata$popsize<-ifelse(indata$province=="Quebec", 8336460,ifelse(indata$province=="Manitoba", 1340565,ifelse(indata$province=="Ontario",14150783,ifelse(indata$province=="Alberta",4258195,ifelse(indata$province=="Nova Scotia",953683,ifelse(indata$province=="British Columbia",4956550,ifelse(indata$province=="Saskatchewan",1154755,ifelse(indata$province=="Prince Edward Island",151376,ifelse(indata$province=="New Brunswick",767935,ifelse(indata$province=="Newfoundland and Labrador", 528288, 0))))))))))
+
+svydesign_strs<-svydesign(id=~1,strata=~province, data=indata, fpc=~popsize)
+mod <- svyglm(feelings_life ~ age+sex+region+own_rent+marital_status+education+income_respondent+children_in_household, svydesign_strs, family="gaussian")
+
+kable(summary.lm(mod)$coefficients, caption="Summary of the selected model", digits=3)
+
+```
+
+```{r table2}
+mod2 <- svyglm(feelings_life ~ age+sex+marital_status+education+income_respondent, svydesign_strs, family="gaussian")
+
+kable(summary.lm(mod2)$coefficients, caption="Summary of the selected model", digits=3)
+```
+
+
+Table \@ref(tab:table2) has the results of our final selected model. 
+First, we can see that all of the P-value for categories in the marital_status 
+variable is extremely small than 0.05, which indicates it is statistically 
+significant for predicting our response variable. Also, all the significant 
+P-values suggest that the most important feature in our model is marital status.
+The result shows that the marital status of common-law and married shows a 
+significant large positive effect on the feelings of life compared to other 
+categories. Plus, the marital status of single and widowed has a significant 
+small positive effect on the feelings of life, while the separated marital 
+status has a significant negative effect on the feelings of life. 
+Other significant variables include age (which indicates a minimal positive 
+relationship with feelings of life), sex male (indicates a negative relationship
+with feelings of life compared with sex female), education of less than high 
+school diploma (indicates a small positive relationship with feelings of life
+compared with all other education categories), the income level of higher than 
+$125000 (indicates a small positive relationship with feelings of life), the 
+income level of $25000-$49999 (indicates a small negative relationship with 
+feelings of life), and income level of less than $25000 (indicates a relatively
+large negative relationship with feelings of life compared with other income 
+levels).
+
+Figure \@ref(tab:figure3) has the results of the model check. The figure shows 
+that multicollinearity, independence, and constant variance assumptions are fine
+in our model. However, normality and linearity assumptions are not well 
+satisfied. With the large sample size (more than 20000), normality can be
+ignored.The dissatisfaction of linearity assumption may suggest transformation 
+on the model for better performance, which indicates a weakness of this model.
+
+```{r figure3}
+#assumption check/ model check
+par(mfrow=c(3,3))
+qqnorm(rstandard(mod2))
+qqline(rstandard(mod2))
+plot(indata$feelings_life ~ mod2$fitted.values, xlab="Fitted", ylab="Feelings of Life")
+abline(a = 0, b = 1, lty=2)
+lines(lowess(mod2$fitted.values, indata$feelings_life), col="red")
+
+plot(rstandard(mod2) ~ fitted(mod2), xlab="Fitted", ylab="Residuals")
+plot(rstandard(mod2) ~ indata$age, xlab="Age", ylab="Residuals")
+plot(rstandard(mod2) ~ indata$sex, xlab="Sex", ylab="Residuals")
+plot(rstandard(mod2) ~ indata$marital_status, xlab="Matital Status", ylab="Residuals")
+plot(rstandard(mod2) ~ indata$education, xlab="Education", ylab="Residuals")
+plot(rstandard(mod2) ~ indata$income_respondent, xlab="Income", ylab="Residuals")
+```
+
+
+## Discussion
+
+From the final selected model we could see:
+First, we discuss the impact of marital_status on life satisfaction. obviously, 
+all of the p-value for categories in marital_status variable is extremely small
+than 0.05 which indicates the significant for predicting life satisfaction. In 
+detail, only the marital status of separated has a negative effect on life 
+satisfaction, other marital status all have the positive effects on life 
+satisfaction. Among them, the marital status of married has the most significant 
+positive effect on life satisfaction than other marital status, which could 
+be reflected in the real life that married people always tend to feel the 
+happiest than other people.
+Second, we discuss the impact of age on life satisfaction. Since the variable of
+age is a numerical variable, we could get the result from this model that, when 
+other conditions remain unchanged, when the age increases by one year, the life 
+satisfaction will increase by 0.0027 units. It can be reflected in real life, 
+that is, life happiness will increase with the increasing of age.
+Third, we discuss the impact of sex on life satisfaction. The p-value for the 
+variable of age is extremely small, so we could tell that it is significant for 
+predicting life satisfaction. The negative number shows that male have a 
+negative relationship on life satisfaction compared with female. In the real 
+life, we could get a general conclusion that Women are more likely to feel 
+happy than men.
+Next, we discuss the impact of education level on life satisfaction. By 
+observing the p-value of those categories in education variable, we can get that 
+except the education of less than high school diploma or its equivalent has a 
+small positive effect effect on life satisfaction, other categories of education 
+variable have no relationship or impact with the life satisfaction since those 
+p-values are much bigger than 0.05. Hence, we consider that the variable of 
+education level have a very insignificant linear relationship with life 
+satisfaction, or even no relationship. This model can reflect in real life that 
+people will not be affected about their happiness because of their education 
+level.
+In the end, we discuss the impact of income on life satisfaction. By looking at 
+the p-value, we can see that income level of $50,000-$74,999 and $75,000-$99,999
+may not have relationship with life satisfaction since their p-values are much 
+bigger than 0.05. However, other income levels have the significant effect on 
+life satisfaction since their p-value are extremely small. In those levels, only
+income of $125,000 and more indicates a small positive relationship with life 
+satisfaction, income of $25,000-$49,999 and income of less than $25,000 both 
+show negative relationships with life satisfaction while income of less than 
+$25,000 has more huge negative effect compared to another income level. From
+this result, we could tell that income will effect the life satisfaction in the 
+real life. Only when income more than $125,000, people will satisfied their 
+life, Or they will not satisfied. And when the income level reaches a relatively
+low level like less than $25,000, the signifiant negative effect on people's 
+life satisfaction will occur immediately.
+
+# Weaknesses
+
+Weakness for the data is that residents from Yukon Northwest Territories, 
+Nunavut and full-time residents of institutions and people aged below 15 are 
+excluded, so the result might not apply to all Canadians.In addition, the 
+response rate is relatively low comparing to previous years’ data collection due 
+the updated population frame. Since linearity of this model is not satisfied, 
+the regression algorithm might not mathematically capture the trend and lead to 
+an inefficient model.
+
+# Next Steps
+
+Health condition could also be included in the questionnaire, as high levels
+of life satisfaction often associates with body wellness. The overall  health 
+condition both physically and mentally would affect feelings of life 
+dramatically. In the future, there could be a subsequent survey for people
+who have feelings of life <=3 to track their mental wellness and give out 
+support when necessary. 
+
+## References
+
+\@ref(tab:table1)
+
+\@ref(fig:fig1)
+
+[@citeR]
+
+
